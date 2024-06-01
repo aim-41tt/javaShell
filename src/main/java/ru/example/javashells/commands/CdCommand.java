@@ -35,7 +35,7 @@ public class CdCommand implements Command {
 
 		if ("-".equals(targetDirectory)) {
 
-			if (args.length >= 2) {
+			if (args.length > 2) {
 				col = Integer.valueOf(args[2]);
 			}
 			for (int i = 0; i <= col; i++) {
