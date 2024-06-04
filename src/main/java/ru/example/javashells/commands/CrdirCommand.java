@@ -2,18 +2,15 @@ package ru.example.javashells.commands;
 
 import java.io.File;
 
+import ru.example.javashells.components.managers.DirectoryManager;
 import ru.example.javashells.interfaces.Command;
 
 public class CrdirCommand implements Command {
 
-	private File currentDirectory;
+	private DirectoryManager directoryManager;
 
-	public CrdirCommand(File initialDirectory) {
-		this.currentDirectory = initialDirectory;
-	}
-
-	public void setCurrentDirectory(File currentDirectory) {
-		this.currentDirectory = currentDirectory;
+	public CrdirCommand(DirectoryManager directoryManager) {
+		this.directoryManager = directoryManager;
 	}
 
 	@Override
@@ -33,7 +30,7 @@ public class CrdirCommand implements Command {
 
 		if (directoryName.charAt(0) == '/') {
 			directoryName = directoryName.substring(1, directoryName.length());
-			newDir = new File(currentDirectory, directoryName);
+			newDir = new File(directoryManager.getCurrentDirectory(), directoryName);
 
 		} else {
 			newDir = new File(directoryName);

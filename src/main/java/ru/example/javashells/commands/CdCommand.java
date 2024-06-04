@@ -3,19 +3,17 @@ package ru.example.javashells.commands;
 import java.io.File;
 import java.util.Stack;
 
+import ru.example.javashells.components.managers.DirectoryManager;
 import ru.example.javashells.interfaces.Command;
 
 public class CdCommand implements Command {
 
-	private File currentDirectory;
+	private DirectoryManager directoryManager;
 	private Stack<File> directoryStack;
-	private CrdirCommand crdirCommand;
 
-	public CdCommand(File initialDirectory, CrdirCommand crdirCommand) {
-		this.currentDirectory = initialDirectory;
+	public CdCommand(DirectoryManager directoryManager) {
+		this.directoryManager = directoryManager;
 		this.directoryStack = new Stack<>();
-		this.crdirCommand = crdirCommand;
-		this.crdirCommand.setCurrentDirectory(initialDirectory);
 	}
 
 	@Override
@@ -38,25 +36,23 @@ public class CdCommand implements Command {
 			if (args.length > 2) {
 				col = Integer.valueOf(args[2]);
 			}
-			for (int i = 0; i <= col; i++) {
+			for (int i = 0; i < col; i++) {
 				if (!directoryStack.isEmpty()) {
 					File previousDirectory = directoryStack.pop();
-					currentDirectory = previousDirectory;
-					crdirCommand.setCurrentDirectory(currentDirectory);
+					directoryManager.setCurrentDirectory(previousDirectory);
 				} else {
-					System.out.println("Каталог изменен на " + currentDirectory.getAbsolutePath());
+					System.out.println("Каталог изменен на " + directoryManager.getCurrentDirectory().getAbsolutePath());
 					System.out.println("Нет каталога, к которому можно было бы вернуться.");
 					return;
 				}
 			}
-			System.out.println("Каталог изменен на " + currentDirectory.getAbsolutePath());
+			System.out.println("Каталог изменен на " + directoryManager.getCurrentDirectory().getAbsolutePath());
 		} else {
-			File newDir = new File(currentDirectory, targetDirectory);
+			File newDir = new File(directoryManager.getCurrentDirectory().getAbsolutePath(), targetDirectory);
 			if (newDir.exists() && newDir.isDirectory()) {
-				directoryStack.push(currentDirectory);
-				currentDirectory = newDir;
-				crdirCommand.setCurrentDirectory(currentDirectory);
-				System.out.println("Directory changed to " + currentDirectory.getAbsolutePath());
+				directoryStack.push(directoryManager.getCurrentDirectory());
+				directoryManager.setCurrentDirectory(newDir);
+				System.out.println("Directory changed to " + directoryManager.getCurrentDirectory().getAbsolutePath());
 			} else {
 				System.out.println("Directory not found: " + targetDirectory);
 			}
@@ -64,6 +60,6 @@ public class CdCommand implements Command {
 	}
 
 	public File getCurrentDirectory() {
-		return currentDirectory;
+		return directoryManager.getCurrentDirectory().getAbsoluteFile();
 	}
 }
