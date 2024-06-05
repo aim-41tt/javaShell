@@ -6,12 +6,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
-import ru.example.javashells.commands.CdCommand;
+import ru.example.javashells.commands.catalogues.CdCommand;
 import ru.example.javashells.interfaces.Command;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -33,7 +34,7 @@ public class ShellApplication {
 	@Bean
 	public CommandLineRunner commandLineRunner(Map<String, Command> commandMap) {
 		return args -> {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in,  StandardCharsets.UTF_8.name()));
 			String commandLine;
 
 			cdCommand = (CdCommand) commandMap.get("cd");

@@ -1,4 +1,4 @@
-package ru.example.javashells.commands;
+package ru.example.javashells.commands.catalogues;
 
 import java.io.File;
 
@@ -23,13 +23,15 @@ public class LsCommand implements Command {
 		try {
 
 			File[] files = directoryManager.getCurrentDirectory().listFiles();
+			
 			System.out.println("Файлы и папки в текущей директории:");
+			
 			for (File file : files) {
 				double lengthFile = file.length() / 1024;
 				if (file.isFile()) {
-					System.out.println("Файл:\t\t" + file.getName() + "\tазмер \t" + lengthFile + "КБ");
+					System.out.println("Файл:\t" + file.getName() + "\tразмер: \t" + lengthFile + "КБ");
 				} else if (file.isDirectory()) {
-					System.out.println("Папка:\t\t" + file.getName() + "\tазмер \t" + lengthFile + "КБ");
+					System.out.println("Папка:\t" + file.getName() + "\tразмер: \t" + lengthFile + "КБ");
 				}
 			}
 

@@ -1,4 +1,4 @@
-package ru.example.javashells.commands;
+package ru.example.javashells.commands.catalogues;
 
 import java.io.File;
 import java.util.Stack;

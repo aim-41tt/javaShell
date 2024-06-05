@@ -3,11 +3,13 @@ package ru.example.javashells.configs;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import ru.example.javashells.commands.CdCommand;
-import ru.example.javashells.commands.CrdirCommand;
 import ru.example.javashells.commands.ExitCommand;
 import ru.example.javashells.commands.HelpCommand;
-import ru.example.javashells.commands.LsCommand;
+import ru.example.javashells.commands.catalogues.CdCommand;
+import ru.example.javashells.commands.catalogues.CrFileCommand;
+import ru.example.javashells.commands.catalogues.CrdirCommand;
+import ru.example.javashells.commands.catalogues.DelCommand;
+import ru.example.javashells.commands.catalogues.LsCommand;
 import ru.example.javashells.components.managers.DirectoryManager;
 import ru.example.javashells.interfaces.Command;
 
@@ -29,13 +31,16 @@ public class CommandConfig {
 		CrdirCommand crdirCommand = new CrdirCommand(directoryManager);
 		CdCommand cdCommand = new CdCommand(directoryManager);
 		LsCommand lsCommand = new LsCommand(directoryManager);
+		CrFileCommand crFileCommand = new CrFileCommand(directoryManager);
+		DelCommand delCommand = new DelCommand(directoryManager);
 
 		Map<String, Command> commandMap = new HashMap<>();
-		commandMap.put("cd", cdCommand);
-		commandMap.put("crdir", crdirCommand);
-		commandMap.put("ls", lsCommand);
-		
-		
+		commandMap.put(cdCommand.getName(), cdCommand);
+		commandMap.put(crdirCommand.getName(), crdirCommand);
+		commandMap.put(lsCommand.getName(), lsCommand);
+		commandMap.put(crFileCommand.getName(), crFileCommand);
+		commandMap.put(delCommand.getName(), delCommand);
+
 		commandMap.put("exit", new ExitCommand());
 		commandMap.put("help", new HelpCommand());
 		return commandMap;
