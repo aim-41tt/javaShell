@@ -3,6 +3,7 @@ package ru.example.javashells.configs;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import ru.example.javashells.commands.ClsCommand;
 import ru.example.javashells.commands.ExitCommand;
 import ru.example.javashells.commands.HelpCommand;
 import ru.example.javashells.commands.catalogues.CdCommand;
@@ -43,6 +44,7 @@ public class CommandConfig {
 
 		commandMap.put("exit", new ExitCommand());
 		commandMap.put("help", new HelpCommand());
+		commandMap.put("cls", new ClsCommand());
 		return commandMap;
 	}
 }

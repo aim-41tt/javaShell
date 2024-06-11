@@ -14,6 +14,7 @@ public class CdCommand implements Command {
 	public CdCommand(DirectoryManager directoryManager) {
 		this.directoryManager = directoryManager;
 		this.directoryStack = new Stack<>();
+		initializeDirectoryStack();
 	}
 
 	@Override
@@ -29,32 +30,37 @@ public class CdCommand implements Command {
 		}
 
 		String targetDirectory = args[1];
-		int col = 0;
+		int col = 1;
 
 		if ("-".equals(targetDirectory)) {
 
 			if (args.length > 2) {
 				col = Integer.valueOf(args[2]);
 			}
-			for (int i = 0; i < col; i++) {
-				if (!directoryStack.isEmpty()) {
-					File previousDirectory = directoryStack.pop();
-					directoryManager.setCurrentDirectory(previousDirectory);
-				} else {
-					System.out.println("Каталог изменен на " + directoryManager.getCurrentDirectory().getAbsolutePath());
-					System.out.println("Нет каталога, к которому можно было бы вернуться.");
-					return;
+			if (directoryStack.size() >= 1) {
+				for (int i = 0; i < col; i++) {
+					if (!directoryStack.isEmpty()) {
+						File previousDirectory = directoryStack.pop();
+						directoryManager.setCurrentDirectory(previousDirectory);
+					} else {
+						System.out.println(
+								"Каталог изменен на " + directoryManager.getCurrentDirectory().getAbsolutePath());
+						System.out.println("Нет каталога, к которому можно было бы вернуться.");
+						return;
+					}
 				}
+				System.out.println("Каталог изменен на " + directoryManager.getCurrentDirectory().getAbsolutePath());
+			} else {
+				System.out.println("Каталог не изменен.");
 			}
-			System.out.println("Каталог изменен на " + directoryManager.getCurrentDirectory().getAbsolutePath());
 		} else {
 			File newDir = new File(directoryManager.getCurrentDirectory().getAbsolutePath(), targetDirectory);
 			if (newDir.exists() && newDir.isDirectory()) {
 				directoryStack.push(directoryManager.getCurrentDirectory());
 				directoryManager.setCurrentDirectory(newDir);
-				System.out.println("Directory changed to " + directoryManager.getCurrentDirectory().getAbsolutePath());
+				System.out.println("Каталог изменен на " + directoryManager.getCurrentDirectory().getAbsolutePath());
 			} else {
-				System.out.println("Directory not found: " + targetDirectory);
+				System.out.println("Каталог не найден: " + targetDirectory);
 			}
 		}
 	}
@@ -62,4 +68,23 @@ public class CdCommand implements Command {
 	public File getCurrentDirectory() {
 		return directoryManager.getCurrentDirectory().getAbsoluteFile();
 	}
+
+	private void initializeDirectoryStack() {
+		File currentDirectory = directoryManager.getCurrentDirectory();
+		Stack<File> tempStack = new Stack<>();
+
+		/*
+		 * Идём от текущей директории к корневой, сохраняя все директории во временный
+		 * стек
+		 */
+		while (currentDirectory != null) {
+			tempStack.push(currentDirectory);
+			currentDirectory = currentDirectory.getParentFile();
+		}
+
+		while (!tempStack.isEmpty()) {
+			directoryStack.push(tempStack.pop());
+		}
+	}
+
 }

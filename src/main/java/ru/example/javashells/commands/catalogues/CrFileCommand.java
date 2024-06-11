@@ -6,6 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import ru.example.javashells.components.managers.DirectoryManager;
 import ru.example.javashells.interfaces.Command;
@@ -63,8 +66,14 @@ public class CrFileCommand implements Command {
 			}
 
 		} else {
-			new File(directoryManager.getCurrentDirectory().getAbsolutePath(), nameFile);
-			System.out.println("Файл успешно создан.");
+			 Path filePath = Paths.get(directoryManager.getCurrentDirectory().getAbsolutePath(), nameFile);
+		        try {
+		            Files.createFile(filePath);
+		            System.out.println("Файл успешно создан.");
+		        } catch (IOException e) {
+		            System.err.println("Произошла ошибка при создании файла: " + e.getMessage());
+		        }
+		
 		}
 	}
 
