@@ -15,6 +15,7 @@ public class CdCommand implements Command {
 		this.directoryManager = directoryManager;
 		this.directoryStack = new Stack<>();
 		initializeDirectoryStack();
+		directoryStack.pop();
 	}
 
 	@Override
