@@ -23,21 +23,36 @@ public class LsCommand implements Command {
 		try {
 
 			File[] files = directoryManager.getCurrentDirectory().listFiles();
-			
-			System.out.println("Файлы и папки в текущей директории:");
-			
-			for (File file : files) {
-				double lengthFile = file.length() / 1024;
-				if (file.isFile()) {
-					System.out.println("Файл:\t" + file.getName() + "\tразмер: \t" + lengthFile + "КБ");
-				} else if (file.isDirectory()) {
-					System.out.println("Папка:\t" + file.getName() + "\tразмер: \t" + lengthFile + "КБ");
-				}
-			}
 
-		} catch (Exception e) {
+			if (files.length >= 0) {
+				System.out.println("Файлы и папки в текущей директории:");
+
+				System.out.println(directoryContentBuilder(files));
+			} else {
+				System.out.println("Файлы и папки не найдены в текущей директории:");
+			}
+		
+		} catch (
+
+		Exception e) {
 			System.out.println(e);
 		}
 	}
+
+	private String directoryContentBuilder(File[] files) {
+	    StringBuilder sb = new StringBuilder();
+	    String format = "%-10s %-30s %20s %8.2f КБ%n";
+
+	    for (File file : files) {
+	        double lengthFile = file.length() / 1024.0;
+
+	        String type = file.isFile() ? "Файл:" : "Папка:";
+	        
+	        sb.append(String.format(format, type, file.getName(), "размер:", lengthFile));
+	    }
+
+	    return sb.toString();
+	}
+
 
 }

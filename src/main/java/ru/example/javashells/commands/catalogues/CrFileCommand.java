@@ -45,7 +45,7 @@ public class CrFileCommand implements Command {
 					contentBuilder.append(" ");
 				}
 			}
-			
+
 			String content = contentBuilder.toString();
 			
 			// Удаляем кавычки, если они есть
@@ -66,14 +66,14 @@ public class CrFileCommand implements Command {
 			}
 
 		} else {
-			 Path filePath = Paths.get(directoryManager.getCurrentDirectory().getAbsolutePath(), nameFile);
-		        try {
-		            Files.createFile(filePath);
-		            System.out.println("Файл успешно создан.");
-		        } catch (IOException e) {
-		            System.err.println("Произошла ошибка при создании файла: " + e.getMessage());
-		        }
-		
+			Path filePath = Paths.get(directoryManager.getCurrentDirectory().getAbsolutePath(), nameFile);
+			try {
+				Files.createFile(filePath);
+				System.out.println("Файл успешно создан.");
+			} catch (IOException e) {
+				System.err.println("Произошла ошибка при создании файла: " + e.getMessage());
+			}
+
 		}
 	}
 
