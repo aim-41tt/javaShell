@@ -29,26 +29,24 @@ public class CommandConfig {
 
 	@Bean
 	public Map<String, Command> commandMap(DirectoryManager directoryManager) {
-
-		CrdirCommand crdirCommand = new CrdirCommand(directoryManager);
-		CdCommand cdCommand = new CdCommand(directoryManager);
-		LsCommand lsCommand = new LsCommand(directoryManager);
-		CrFileCommand crFileCommand = new CrFileCommand(directoryManager);
-		DelCommand delCommand = new DelCommand(directoryManager);
-		CopyCommand copyCommand = new CopyCommand(directoryManager);
-
 		Map<String, Command> commandMap = new HashMap<>();
-		
-		commandMap.put(cdCommand.getName(), cdCommand);
-		commandMap.put(crdirCommand.getName(), crdirCommand);
-		commandMap.put(lsCommand.getName(), lsCommand);
-		commandMap.put(crFileCommand.getName(), crFileCommand);
-		commandMap.put(delCommand.getName(), delCommand);
-		commandMap.put(copyCommand.getName(),copyCommand);
+
+		registerCommand(commandMap, new CdCommand(directoryManager));
+		registerCommand(commandMap, new CrdirCommand(directoryManager));
+		registerCommand(commandMap, new LsCommand(directoryManager));
+		registerCommand(commandMap, new CrFileCommand(directoryManager));
+		registerCommand(commandMap, new DelCommand(directoryManager));
+		registerCommand(commandMap, new CopyCommand(directoryManager));
 
 		commandMap.put("exit", new ExitCommand());
 		commandMap.put("help", new HelpCommand());
 		commandMap.put("cls", new ClsCommand());
+		
 		return commandMap;
 	}
+
+	private void registerCommand(Map<String, Command> commandMap, Command command) {
+		commandMap.put(command.getName(), command);
+	}
+
 }
