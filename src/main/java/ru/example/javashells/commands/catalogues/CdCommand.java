@@ -50,6 +50,7 @@ public class CdCommand implements Command {
 
 	    } else {
 	        File newDir = new File(directoryManager.getCurrentDirectory().getAbsolutePath(), targetDirectory);
+	        
 	        if (newDir.exists() && newDir.isDirectory()) {
 	            directoryStack.push(directoryManager.getCurrentDirectory());
 	            directoryManager.setCurrentDirectory(newDir);

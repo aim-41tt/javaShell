@@ -31,34 +31,32 @@ public class CopyCommand implements Command {
 			System.out.println("Usage: copy <file/dir> <directory>");
 			return;
 		}
+		
+		 Path currentDirectory = Paths.get(directoryManager.getCurrentDirectory().getAbsolutePath());
+		    Path sourceFile = currentDirectory.resolve(args[1]);
+		    Path targetDir = Paths.get(args[2]);
 
-		if (args.length == 3) {
-			Path sourceFile = Paths.get(directoryManager.getCurrentDirectory().getAbsolutePath() + "/" + args[1]);
-			Path targetDir = Paths.get(args[2]);
+		    Runnable copyAction = () -> {
+		        try {
+		            if (!Files.exists(targetDir)) {
+		                Files.createDirectories(targetDir);
+		            }
 
-			try {
-				if (!Files.exists(targetDir)) {
-					Files.createDirectories(targetDir);
-				}
+		            Path targetPath = targetDir.resolve(sourceFile.getFileName());
+		            Files.copy(sourceFile, targetPath, StandardCopyOption.REPLACE_EXISTING);
 
-				Path targetPath = targetDir.resolve(sourceFile.getFileName());
+		            String resultMessage = Files.isDirectory(targetPath) ?
+		                    "Каталог " + sourceFile.getFileName() + " успешно скопирован в " + targetPath :
+		                    "Файл " + sourceFile.getFileName() + " успешно скопирован в " + targetPath;
+		            
+		            System.out.println(resultMessage);
+		            
+		        } catch (IOException e) {
+		            e.printStackTrace();
+		        }
+		    };
 
-				Files.copy(sourceFile, targetPath, StandardCopyOption.REPLACE_EXISTING);
-				
-				if (targetPath.toFile().isFile()) {
-					System.out.println("Файл " + sourceFile.getFileName() + " успешно скопирован в " + targetPath);
-				} else if (targetPath.toFile().isDirectory()) {
-					System.out.println("Каталог " + sourceFile.getFileName() + " успешно скопирован в " + targetPath);
-				}
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-		} else {
-			System.out.println("В команде не хватает некоторых компонентов.");
-		}
-
+		    copyAction.run();
 	}
 
 }
