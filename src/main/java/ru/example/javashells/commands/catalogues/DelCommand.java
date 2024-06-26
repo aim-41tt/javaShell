@@ -30,21 +30,21 @@ public class DelCommand implements Command {
 			System.out.println("Usage: Del <directory or file>");
 			return;
 		}
-		try {
-			Path fileOrDirectoryPath = Paths
-					.get(directoryManager.getCurrentDirectory().getAbsolutePath() + "\\" + args[1]);
 
+		Path fileOrDirectoryPath = Paths.get(directoryManager.getCurrentDirectory().getAbsolutePath(), args[1]);
+		
+		try {
 			deleteDirectoryRecursively(fileOrDirectoryPath);
 
-			System.out.println("Директория: "+fileOrDirectoryPath.toString()+" успешно удалена.");
+			System.out.println("Директория или файл: " + fileOrDirectoryPath.toString() + " успешно удалены.");
 		} catch (IOException e) {
-			System.err.println("Ошибка при удалении директории: " + e.getMessage());
+			System.err.println("Ошибка при удалении директории или файла: " + e.getMessage());
 		}
 
 	}
 
 	private void deleteDirectoryRecursively(Path path) throws IOException {
-		Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+		Files.walkFileTree(path, new SimpleFileVisitor<>() {
 			@Override
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 				Files.delete(file);
