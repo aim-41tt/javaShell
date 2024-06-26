@@ -1,7 +1,10 @@
 package ru.example.javashells.commands.catalogues;
 
 import java.io.File;
+import java.util.Optional;
 import java.util.Stack;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import ru.example.javashells.components.managers.DirectoryManager;
 import ru.example.javashells.interfaces.Command;
@@ -31,39 +34,30 @@ public class CdCommand implements Command {
 		}
 
 		String targetDirectory = args[1];
-		int col = 1;
-
+		
 		if ("-".equals(targetDirectory)) {
+	        int col = args.length > 2 ? Integer.parseInt(args[2]) : 1;
 
-			if (args.length > 2) {
-				col = Integer.valueOf(args[2]);
-			}
-			if (directoryStack.size() >= 1) {
-				for (int i = 0; i < col; i++) {
-					if (!directoryStack.isEmpty()) {
-						File previousDirectory = directoryStack.pop();
-						directoryManager.setCurrentDirectory(previousDirectory);
-					} else {
-						System.out.println(
-								"Каталог изменен на " + directoryManager.getCurrentDirectory().getAbsolutePath());
-						System.out.println("Нет каталога, к которому можно было бы вернуться.");
-						return;
-					}
-				}
-				System.out.println("Каталог изменен на " + directoryManager.getCurrentDirectory().getAbsolutePath());
-			} else {
-				System.out.println("Каталог не изменен.");
-			}
-		} else {
-			File newDir = new File(directoryManager.getCurrentDirectory().getAbsolutePath(), targetDirectory);
-			if (newDir.exists() && newDir.isDirectory()) {
-				directoryStack.push(directoryManager.getCurrentDirectory());
-				directoryManager.setCurrentDirectory(newDir);
-				System.out.println("Каталог изменен на " + directoryManager.getCurrentDirectory().getAbsolutePath());
-			} else {
-				System.out.println("Каталог не найден: " + targetDirectory);
-			}
-		}
+	        IntStream.range(0, col)
+	                .takeWhile(i -> !directoryStack.isEmpty())
+	                .forEach(i -> directoryManager.setCurrentDirectory(directoryStack.pop()));
+
+	        Optional.ofNullable(directoryManager.getCurrentDirectory())
+	                .ifPresentOrElse(
+	                        dir -> System.out.println("Каталог изменен на " + dir.getAbsolutePath()),
+	                        () -> System.out.println("Нет каталога, к которому можно было бы вернуться.")
+	                );
+
+	    } else {
+	        File newDir = new File(directoryManager.getCurrentDirectory().getAbsolutePath(), targetDirectory);
+	        if (newDir.exists() && newDir.isDirectory()) {
+	            directoryStack.push(directoryManager.getCurrentDirectory());
+	            directoryManager.setCurrentDirectory(newDir);
+	            System.out.println("Каталог изменен на " + directoryManager.getCurrentDirectory().getAbsolutePath());
+	        } else {
+	            System.out.println("Каталог не найден: " + targetDirectory);
+	        }
+	    }
 	}
 
 	public File getCurrentDirectory() {
@@ -72,16 +66,12 @@ public class CdCommand implements Command {
 
 	private void initializeDirectoryStack() {
 		File currentDirectory = directoryManager.getCurrentDirectory();
+
 		Stack<File> tempStack = new Stack<>();
 
-		/*
-		 * Идём от текущей директории к корневой, сохраняя все директории во временный
-		 * стек
-		 */
-		while (currentDirectory != null) {
-			tempStack.push(currentDirectory);
-			currentDirectory = currentDirectory.getParentFile();
-		}
+		Stream.iterate(currentDirectory, File::getParentFile)
+		.takeWhile(file -> file != null)
+		.forEach(tempStack::push);
 
 		while (!tempStack.isEmpty()) {
 			directoryStack.push(tempStack.pop());
