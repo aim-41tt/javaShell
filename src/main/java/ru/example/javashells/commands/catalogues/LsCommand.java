@@ -19,7 +19,6 @@ public class LsCommand implements Command {
 	public String getName() {
 		return "ls";
 	}
-
 	@Override
 	public void execute(String[] args) {
 		try {
@@ -40,7 +39,7 @@ public class LsCommand implements Command {
 	}
 
 	private String directoryContentBuilder(File[] files) {
-		String format = "%-10s %-30s %20s %8.2f КБ%n";
+		String format = "%-10s %-25s %20s %10.2f КБ%n";
 
 		return Arrays.stream(files).map(file -> {
 			double lengthFile = file.length() / 1024.0;
