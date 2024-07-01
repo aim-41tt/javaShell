@@ -20,22 +20,16 @@ import java.util.StringTokenizer;
 @Import(ru.example.javashells.configs.CommandConfig.class)
 public class ShellApplication {
 
-	private static CdCommand CdCommand = null;
 	private CdCommand cdCommand;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ShellApplication.class, args);
 	}
 
-	public static CdCommand getcdAbsolutePath() {
-		return CdCommand;
-	}
-
 	@Bean
 	public CommandLineRunner commandLineRunner(Map<String, Command> commandMap) {
 		return args -> {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in,  StandardCharsets.UTF_8.name()));
-			String commandLine;
+			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8.name()));
 
 			cdCommand = (CdCommand) commandMap.get("cd");
 
@@ -43,48 +37,54 @@ public class ShellApplication {
 
 			while (true) {
 				System.out.print(cdCommand.getCurrentDirectory().getAbsolutePath() + "\\$>~");
-				commandLine = reader.readLine();
+				String commandLine = reader.readLine();
 
-				StringTokenizer tokenizer = new StringTokenizer(commandLine);
-				if (!tokenizer.hasMoreTokens()) {
+				if (commandLine == null || commandLine.trim().isEmpty()) {
 					continue;
 				}
 
+				StringTokenizer tokenizer = new StringTokenizer(commandLine);
 				String commandName = tokenizer.nextToken();
 				Command command = commandMap.get(commandName);
 
 				if (command != null) {
-					String[] cmdArray = new String[tokenizer.countTokens() + 1];
-					cmdArray[0] = commandName;
-					int index = 1;
-					while (tokenizer.hasMoreTokens()) {
-						cmdArray[index++] = tokenizer.nextToken();
-					}
-					command.execute(cmdArray);
+					executeCommand(tokenizer, commandName, command);
 				} else {
-					// Если команда не встроенная, пробуем выполнить как системную
-					String[] cmdArray = new String[tokenizer.countTokens() + 1];
-					cmdArray[0] = commandName;
-					int index = 1;
-					while (tokenizer.hasMoreTokens()) {
-						cmdArray[index++] = tokenizer.nextToken();
-					}
-
-					ProcessBuilder pb = new ProcessBuilder(cmdArray);
-					try {
-						Process process = pb.start();
-						BufferedReader processOutput = new BufferedReader(
-								new InputStreamReader(process.getInputStream()));
-						String line;
-						while ((line = processOutput.readLine()) != null) {
-							System.out.println(line);
-						}
-						process.waitFor();
-					} catch (IOException | InterruptedException e) {
-						System.out.println("Ошибка выполнения команды: " + e.getMessage());
-					}
+					executeSystemCommand(tokenizer, commandName);
 				}
 			}
 		};
+	}
+
+	private void executeCommand(StringTokenizer tokenizer, String commandName, Command command) {
+		String[] cmdArray = new String[tokenizer.countTokens() + 1];
+		cmdArray[0] = commandName;
+		int index = 1;
+		while (tokenizer.hasMoreTokens()) {
+			cmdArray[index++] = tokenizer.nextToken();
+		}
+		command.execute(cmdArray);
+	}
+
+	private void executeSystemCommand(StringTokenizer tokenizer, String commandName) {
+		String[] cmdArray = new String[tokenizer.countTokens() + 1];
+		cmdArray[0] = commandName;
+		int index = 1;
+		while (tokenizer.hasMoreTokens()) {
+			cmdArray[index++] = tokenizer.nextToken();
+		}
+
+		ProcessBuilder pb = new ProcessBuilder(cmdArray);
+		try {
+			Process process = pb.start();
+			BufferedReader processOutput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			String line;
+			while ((line = processOutput.readLine()) != null) {
+				System.out.println(line);
+			}
+			process.waitFor();
+		} catch (IOException | InterruptedException e) {
+			System.out.println("Ошибка выполнения команды: " + e.getMessage());
+		}
 	}
 }

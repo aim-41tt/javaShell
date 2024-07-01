@@ -19,6 +19,7 @@ public class HelpCommand implements Command {
 				+ "\n ls - содержимое деректории "
 				+ "\n cls - очистка коносли-терминала"
 				+ "\n copy - копирывание файлов"
-				+ "\n rename - изменение имини file/dir");		
+				+ "\n rename - изменение имини file/dir"
+				+ "\n");		
 	}
 }
