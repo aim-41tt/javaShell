@@ -13,6 +13,7 @@ import ru.example.javashells.commands.catalogues.CrdirCommand;
 import ru.example.javashells.commands.catalogues.DelCommand;
 import ru.example.javashells.commands.catalogues.LsCommand;
 import ru.example.javashells.commands.catalogues.RenameCommand;
+import ru.example.javashells.commands.systemMonitors.MonitorCommand;
 import ru.example.javashells.components.managers.DirectoryManager;
 import ru.example.javashells.interfaces.Command;
 
@@ -39,11 +40,12 @@ public class CommandConfig {
 		registerCommand(commandMap, new DelCommand(directoryManager));
 		registerCommand(commandMap, new CopyCommand(directoryManager));
 		registerCommand(commandMap, new RenameCommand(directoryManager));
-
-		commandMap.put("exit", new ExitCommand());
-		commandMap.put("help", new HelpCommand());
-		commandMap.put("cls", new ClsCommand());
 		
+		registerCommand(commandMap, new MonitorCommand());
+
+		registerCommand(commandMap, new ClsCommand());
+		registerCommand(commandMap,new ExitCommand());
+		registerCommand(commandMap, new HelpCommand());
 		return commandMap;
 	}
 
