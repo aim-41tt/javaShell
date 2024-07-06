@@ -1,4 +1,4 @@
-package ru.example.javashells.commands.catalogues;
+package ru.example.javashells.commands.utilsForFilesAndDir;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;

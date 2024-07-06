@@ -1,8 +1,6 @@
-package ru.example.javashells.commands.catalogues;
+package ru.example.javashells.commands.utilsForFilesAndDir;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import ru.example.javashells.components.managers.DirectoryManager;
 import ru.example.javashells.interfaces.Command;

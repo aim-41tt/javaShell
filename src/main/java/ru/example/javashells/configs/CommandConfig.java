@@ -7,13 +7,13 @@ import ru.example.javashells.commands.ClsCommand;
 import ru.example.javashells.commands.ExitCommand;
 import ru.example.javashells.commands.HelpCommand;
 import ru.example.javashells.commands.catalogues.CdCommand;
-import ru.example.javashells.commands.catalogues.CopyCommand;
 import ru.example.javashells.commands.catalogues.CrFileCommand;
 import ru.example.javashells.commands.catalogues.CrdirCommand;
-import ru.example.javashells.commands.catalogues.DelCommand;
 import ru.example.javashells.commands.catalogues.LsCommand;
-import ru.example.javashells.commands.catalogues.RenameCommand;
 import ru.example.javashells.commands.systemMonitors.MonitorCommand;
+import ru.example.javashells.commands.utilsForFilesAndDir.CopyCommand;
+import ru.example.javashells.commands.utilsForFilesAndDir.DelCommand;
+import ru.example.javashells.commands.utilsForFilesAndDir.RenameCommand;
 import ru.example.javashells.components.managers.DirectoryManager;
 import ru.example.javashells.interfaces.Command;
 
