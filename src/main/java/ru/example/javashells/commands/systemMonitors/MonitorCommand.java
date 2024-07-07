@@ -32,7 +32,6 @@ public class MonitorCommand implements Command {
         OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
         ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
         
-        // Информация о системе
         sb.append("Информация о системе:\n")
           .append("  ОС: ").append(osBean.getName()).append(", ").append(osBean.getVersion()).append("\n")
           .append("  Архитектура: ").append(osBean.getArch()).append("\n")
@@ -41,15 +40,19 @@ public class MonitorCommand implements Command {
         
     }
 
-    private void appendCpuUsage(StringBuilder sb) {
-        OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
+    @SuppressWarnings("deprecation")
+	private void appendCpuUsage(StringBuilder sb) {
+        com.sun.management.OperatingSystemMXBean osBean = 
+            (com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
 
-        double loadAverage = osBean.getSystemLoadAverage();
+        double systemCpuLoad = osBean.getSystemCpuLoad();
+        double processCpuLoad = osBean.getProcessCpuLoad();
 
         sb.append("Использование ЦП:\n")
-          .append("  Средняя нагрузка системы с момента включения:\n")
-          .append("  ").append(formatLoad(loadAverage)).append("\n");
-
+          .append("  Загрузка ЦП системы: ")
+          .append(formatPercentage(systemCpuLoad)).append(" %\n")
+          .append("  Загрузка ЦП процесса: ")
+          .append(formatPercentage(processCpuLoad)).append(" %\n\n");
     }
 
     private void appendMemoryUsage(StringBuilder sb) {
@@ -91,8 +94,12 @@ public class MonitorCommand implements Command {
         return bytes / (1024 * 1024 * 1024);
     }
     
-    private String formatLoad(double loadAverage) {
-        return (loadAverage < 0) ? "информация недоступна" : String.format("%.2f", loadAverage);
+    
+    private String formatPercentage(double value) {
+        if (value < 0) {
+            return "Недоступно";
+        }
+        return String.format("%.2f", value * 100);
     }
     
 }
