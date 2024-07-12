@@ -5,10 +5,15 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.ThreadMXBean;
 import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import ru.example.javashells.interfaces.Command;
 
 public class MonitorCommand implements Command {
+	
+	private final ExecutorService executorService = Executors.newCachedThreadPool();
 
     @Override
     public String getName() {
@@ -17,15 +22,40 @@ public class MonitorCommand implements Command {
 
     @Override
     public void execute(String[] args) {
-        StringBuilder sb = new StringBuilder();
+        Future<?> future = executorService.submit(() -> {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Мониторинг системных ресурсов:\n\n");
+            
+           
+            boolean includeCpu =  args.length == 1 || Arrays.asList(args).contains("-c");
+            boolean includeMemory = args.length == 1 || Arrays.asList(args).contains("-m");
+            boolean includeDisk = args.length == 1 || Arrays.asList(args).contains("-d");
+            
 
-        sb.append("Мониторинг системных ресурсов:\n\n");
-        appendSystemInfo(sb);
-        appendCpuUsage(sb);
-        appendMemoryUsage(sb);
-        appendDiskUsage(sb);
+            if (includeCpu) {
+                appendSystemInfo(sb);
+                appendCpuUsage(sb);
+            }
+            if (includeMemory) {
+                appendMemoryUsage(sb);
+            }
+            if (includeDisk) {
+                appendDiskUsage(sb);
+            }
 
-        System.out.println(sb.toString());
+            synchronized (System.out) {
+                System.out.println(sb.toString());
+            }
+        });
+
+        try {
+            future.get();
+        } catch (Exception e) {
+            synchronized (System.err) {
+                System.err.println("Ошибка при выполнении команды: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
     }
 
     private void appendSystemInfo(StringBuilder sb) {
@@ -35,7 +65,7 @@ public class MonitorCommand implements Command {
         sb.append("Информация о системе:\n")
           .append("  ОС: ").append(osBean.getName()).append(", ").append(osBean.getVersion()).append("\n")
           .append("  Архитектура: ").append(osBean.getArch()).append("\n")
-          .append("  Количество процессоров (ядер): ").append(threadBean.getThreadCount()).append("\n")
+          .append("  Количество процессоров (ядер): ").append(threadBean.getThreadCount()-1).append("\n")
           .append("  Количество потоков: ").append(osBean.getAvailableProcessors()).append("\n\n");
         
     }
@@ -101,5 +131,8 @@ public class MonitorCommand implements Command {
         }
         return String.format("%.2f", value * 100);
     }
-    
+
+    public void shutdown() {
+        executorService.shutdown();
+    }
 }
