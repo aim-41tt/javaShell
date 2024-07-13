@@ -20,17 +20,28 @@ import ru.example.javashells.interfaces.Command;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Configuration
 public class CommandConfig {
 
+	private ExecutorService executorService = Executors.newCachedThreadPool();
+	
 	@Bean
-	public DirectoryManager directoryManager() {
+	DirectoryManager directoryManager() {
 		return new DirectoryManager(new File(System.getProperty("user.dir")));
 	}
+	
+	@Bean
+	ExecutorService executorService() {
+		executorService = Executors.newCachedThreadPool();
+		return executorService;
+	}
+	
 
 	@Bean
-	public Map<String, Command> commandMap(DirectoryManager directoryManager) {
+	Map<String, Command> commandMap(DirectoryManager directoryManager,ExecutorService executorService ) {
 		Map<String, Command> commandMap = new HashMap<>();
 
 		registerCommand(commandMap, new CdCommand(directoryManager));

@@ -26,26 +26,23 @@ public class MonitorCommand implements Command {
             StringBuilder sb = new StringBuilder();
             sb.append("Мониторинг системных ресурсов:\n\n");
             
-           
-            boolean includeCpu =  args.length == 1 || Arrays.asList(args).contains("-c");
-            boolean includeMemory = args.length == 1 || Arrays.asList(args).contains("-m");
-            boolean includeDisk = args.length == 1 || Arrays.asList(args).contains("-d");
+            boolean includaAll = args.length == 1 ;
             
-
-            if (includeCpu) {
+            if (includaAll || Arrays.asList(args).contains("-c")) {
                 appendSystemInfo(sb);
                 appendCpuUsage(sb);
             }
-            if (includeMemory) {
+            if (includaAll || Arrays.asList(args).contains("-m")) {
                 appendMemoryUsage(sb);
             }
-            if (includeDisk) {
+            if (includaAll || Arrays.asList(args).contains("-d")) {
                 appendDiskUsage(sb);
             }
 
             synchronized (System.out) {
                 System.out.println(sb.toString());
             }
+            
         });
 
         try {
