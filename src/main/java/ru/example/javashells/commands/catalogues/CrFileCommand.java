@@ -9,16 +9,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import ru.example.javashells.components.managers.DirectoryManager;
 import ru.example.javashells.interfaces.Command;
 
 public class CrFileCommand implements Command {
 
 	private DirectoryManager directoryManager;
-	//private final ExecutorService executorService = Executors.newCachedThreadPool();
 
 	public CrFileCommand(DirectoryManager directoryManager) {
 		this.directoryManager = directoryManager;

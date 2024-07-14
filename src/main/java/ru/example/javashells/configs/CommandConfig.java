@@ -26,8 +26,6 @@ import java.util.concurrent.Executors;
 @Configuration
 public class CommandConfig {
 
-	private ExecutorService executorService = Executors.newCachedThreadPool();
-	
 	@Bean
 	DirectoryManager directoryManager() {
 		return new DirectoryManager(new File(System.getProperty("user.dir")));
@@ -35,8 +33,7 @@ public class CommandConfig {
 	
 	@Bean
 	ExecutorService executorService() {
-		executorService = Executors.newCachedThreadPool();
-		return executorService;
+		return Executors.newCachedThreadPool();
 	}
 	
 
@@ -52,11 +49,12 @@ public class CommandConfig {
 		registerCommand(commandMap, new CopyCommand(directoryManager));
 		registerCommand(commandMap, new RenameCommand(directoryManager));
 		
-		registerCommand(commandMap, new MonitorCommand());
+		registerCommand(commandMap, new MonitorCommand(executorService));
 
 		registerCommand(commandMap, new ClsCommand());
 		registerCommand(commandMap,new ExitCommand());
 		registerCommand(commandMap, new HelpCommand());
+		
 		return commandMap;
 	}
 

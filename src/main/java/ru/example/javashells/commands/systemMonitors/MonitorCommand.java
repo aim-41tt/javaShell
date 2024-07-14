@@ -6,16 +6,20 @@ import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.ThreadMXBean;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import ru.example.javashells.interfaces.Command;
 
 public class MonitorCommand implements Command {
 	
-	private final ExecutorService executorService = Executors.newCachedThreadPool();
+	
+	private final ExecutorService executorService;
+	
+    public MonitorCommand(ExecutorService executorService) {
+    	this.executorService = executorService;
+	}
 
-    @Override
+	@Override
     public String getName() {
         return "monitor";
     }
