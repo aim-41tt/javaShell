@@ -67,3 +67,5 @@ build/
 
 # test
 test
+compilation.bat
+start.bat

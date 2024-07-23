@@ -38,13 +38,13 @@ public class CommandConfig {
 	
 
 	@Bean
-	Map<String, Command> commandMap(DirectoryManager directoryManager,ExecutorService executorService ) {
+	Map<String, Command> commandMap(DirectoryManager directoryManager, ExecutorService executorService) {
 		Map<String, Command> commandMap = new HashMap<>();
 
 		registerCommand(commandMap, new CdCommand(directoryManager));
-		registerCommand(commandMap, new CrdirCommand(directoryManager));
-		registerCommand(commandMap, new LsCommand(directoryManager));
-		registerCommand(commandMap, new CrFileCommand(directoryManager));
+		registerCommand(commandMap, new CrdirCommand(directoryManager, executorService));
+		registerCommand(commandMap, new LsCommand(directoryManager, executorService));
+		registerCommand(commandMap, new CrFileCommand(directoryManager, executorService));
 		registerCommand(commandMap, new DelCommand(directoryManager));
 		registerCommand(commandMap, new CopyCommand(directoryManager));
 		registerCommand(commandMap, new RenameCommand(directoryManager));

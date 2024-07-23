@@ -3,38 +3,56 @@ package ru.example.javashells.commands.catalogues;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import ru.example.javashells.components.managers.DirectoryManager;
 import ru.example.javashells.interfaces.Command;
 
 public class LsCommand implements Command {
 
-	private DirectoryManager directoryManager;
+	private final DirectoryManager directoryManager;
+	private final ExecutorService executorService;
 
-	public LsCommand(DirectoryManager directoryManager) {
+	public LsCommand(DirectoryManager directoryManager, ExecutorService executorService) {
 		this.directoryManager = directoryManager;
+		this.executorService = executorService;
 	}
 
 	@Override
 	public String getName() {
 		return "ls";
 	}
+
 	@Override
 	public void execute(String[] args) {
-		try {
+		Future<?> future = executorService.submit(() -> {
+			try {
+				File[] files = Optional.ofNullable(directoryManager.getCurrentDirectory().listFiles())
+						.orElse(new File[0]);
 
-			File[] files = Optional.ofNullable(directoryManager.getCurrentDirectory().listFiles())
-					.orElse(new File[0]);
-
-			if (files.length > 0) {
-				System.out.println("Файлы и папки в текущей директории:");
-				System.out.println(directoryContentBuilder(files));
-			} else {
-				System.out.println("Файлы и папки не найдены в текущей директории:");
+				synchronized (System.out) {
+					if (files.length > 0) {
+						System.out.println("Файлы и папки в текущей директории:");
+						System.out.println(directoryContentBuilder(files));
+					} else {
+						System.out.println("Файлы и папки не найдены в текущей директории:");
+					}
+				}
+			} catch (Exception e) {
+				synchronized (System.out) {
+					System.out.println("Произошла ошибка: " + e.getMessage());
+				}
 			}
-
+		});
+		
+		try {
+			future.get();
 		} catch (Exception e) {
-			e.getMessage();
+			synchronized (System.err) {
+				System.err.println("Ошибка при выполнении команды: " + e.getMessage());
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -44,10 +62,9 @@ public class LsCommand implements Command {
 		return Arrays.stream(files).map(file -> {
 			double lengthFile = file.length() / 1024.0;
 			String type = file.isFile() ? "Файл:" : "Папка:";
+			
 			return String.format(format, type, file.getName(), "размер:", lengthFile);
-		})
-		.reduce(new StringBuilder(), (sb, str) -> sb.append(str), StringBuilder::append)
-		.toString();
+		}).reduce(new StringBuilder(), (sb, str) -> sb.append(str), StringBuilder::append).toString();
 	}
 
 }

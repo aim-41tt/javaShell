@@ -35,7 +35,7 @@ public class CdCommand implements Command {
 
 		String targetDirectory = args[1];
 		
-		if ("-".equals(targetDirectory)) {
+		if ("-".equals(targetDirectory) || "..".equals(targetDirectory) ) {
 	        int col = args.length > 2 ? Integer.parseInt(args[2]) : 1;
 
 	        IntStream.range(0, col)
